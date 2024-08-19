@@ -1,15 +1,3 @@
-:root {
-   --tg-theme-text-color: #000000;
-   --tg-theme-bg-color: #ffffff;
-   --tg-theme-button-color: #007bff;
-   --tg-theme-button-text-color: #ffffff;
-   --tg-theme-hint-color: #6c757d;
-   --tg-theme-link-color: #007bff;
-   --tg-theme-border-color: #dee2e6;
-   --tg-theme-active-button-color: #0056b3;
-   --tg-theme-button-hover-color: #0056b3; /* Добавлен цвет hover */
-}
-
 /* Основные стили для body */
 body {
    color: var(--tg-theme-text-color);
@@ -17,12 +5,12 @@ body {
    display: flex;
    flex-direction: column;
    align-items: center;
-   font-size: 16px;
+   font-size: 16px; /* Оптимизировано для мобильных устройств */
    margin: 0;
    height: 100vh;
    overflow: hidden;
    box-sizing: border-box;
-   font-family: Arial, sans-serif;
+   font-family: Arial, sans-serif; /* Оптимизировано для мобильных устройств */
 }
 
 /* Контейнер для основного контента */
@@ -52,8 +40,8 @@ body {
    padding: 10px;
    border-radius: 5px;
    cursor: pointer;
-   transition: background-color 0.3s, transform 0.2s;
-   will-change: background-color, transform;
+   transition: background-color 0.3s ease, transform 0.2s ease;
+   will-change: background-color, transform; /* Оптимизация анимаций */
 }
 
 .button-group button:hover {
@@ -69,10 +57,10 @@ body {
    display: none;
    flex-direction: column;
    width: 100%;
-   height: calc(100% - 60px);
+   height: calc(100% - 60px); /* Высота секций с учетом высоты кнопок переключения */
    overflow-y: auto;
    transition: opacity 0.3s ease, transform 0.3s ease;
-   will-change: opacity, transform;
+   will-change: opacity, transform; /* Оптимизация анимаций */
 }
 
 .section.active {
@@ -87,6 +75,7 @@ body {
 }
 
 /* Стили для кнопок акций */
+/* Стили для кнопок акций (продолжение) */
 .promotion-button {
    background: var(--tg-theme-button-color);
    color: var(--tg-theme-button-text-color);
@@ -97,8 +86,8 @@ body {
    width: calc(100% - 20px);
    border-radius: 5px;
    cursor: pointer;
-   transition: background-color 0.3s, transform 0.2s;
-   will-change: background-color, transform;
+   transition: background-color 0.3s ease, transform 0.2s ease;
+   will-change: background-color, transform; /* Оптимизация анимаций */
 }
 
 .promotion-button:hover {
