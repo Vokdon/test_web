@@ -11,19 +11,19 @@
 <body>
    <div class="container">
       <div class="button-group">
-         <button id="btnPromotions" class="active" aria-label="Просмотр акций">Акции</button>
-         <button id="btnCategories" aria-label="Просмотр категорий">Категории</button>
+         <button id="btnPromotions" class="active">Акции</button>
+         <button id="btnCategories">Категории</button>
       </div>
 
       <div id="promotionsSection" class="section active">
-         <button class="promotion" data-description="Описание акции 1" aria-label="Акция 1">Акция 1</button>
-         <button class="promotion" data-description="Описание акции 2" aria-label="Акция 2">Акция 2</button>
+         <button class="promotion" data-description="Описание акции 1">Акция 1</button>
+         <button class="promotion" data-description="Описание акции 2">Акция 2</button>
          <!-- Добавьте больше кнопок с акциями по аналогии -->
       </div>
 
       <div id="categoriesSection" class="section">
-         <button class="category" data-category="Категория 1" aria-label="Категория 1">Категория 1</button>
-         <button class="category" data-category="Категория 2" aria-label="Категория 2">Категория 2</button>
+         <button class="category" data-category="Категория 1">Категория 1</button>
+         <button class="category" data-category="Категория 2">Категория 2</button>
          <!-- Добавьте больше кнопок с категориями по аналогии -->
       </div>
 
@@ -40,17 +40,6 @@
    <script>
       let tg = window.Telegram.WebApp;
       tg.expand();
-
-      function updateTheme() {
-         document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
-         document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-         document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
-         document.documentElement.style.setProperty('--tg-theme-active-button-color', tg.themeParams.active_button_color);
-         document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color);
-         document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
-      }
-
-      tg.onEvent('themeChanged', updateTheme);
 
       document.getElementById('btnPromotions').addEventListener('click', function() {
          document.getElementById('promotionsSection').classList.add('active');
@@ -96,7 +85,6 @@
             const button = document.createElement('button');
             button.classList.add('promotion-button');
             button.innerText = promotion;
-            button.setAttribute('aria-label', promotion);
             button.addEventListener('click', function() {
                document.querySelectorAll('.promotion').forEach(btn => {
                   if (btn.innerText === promotion) {
@@ -130,8 +118,6 @@
       tg.MainButton.onClick(() => {
          tg.sendData("Выбранные данные");
       });
-
-      updateTheme();
    </script>
 </body>
 </html>
