@@ -1,123 +1,176 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Telegram Web App</title>
-   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-   <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-   <div class="container">
-      <div class="button-group">
-         <button id="btnPromotions" class="active">Акции</button>
-         <button id="btnCategories">Категории</button>
-      </div>
+    <div class="container">
+        <div class="button-group">
+            <button id="btnPromotions" class="active" aria-label="Просмотр акций">Акции</button>
+            <button id="btnCategories" aria-label="Просмотр категорий">Категории</button>
+        </div>
 
-      <div id="promotionsSection" class="section active">
-         <button class="promotion" data-description="Описание акции 1">Акция 1</button>
-         <button class="promotion" data-description="Описание акции 2">Акция 2</button>
-         <!-- Добавьте больше кнопок с акциями по аналогии -->
-      </div>
+        <div id="promotionsSection" class="section active">
+            <button class="promotion" data-promotion='{"name":"Акция 1","description":"Описание акции 1","codes":[{"code":"PROMO1","expiry":"2024-12-31"}],"site":"https://example.com"}' aria-label="Акция 1">Акция 1</button>
+            <button class="promotion" data-promotion='{"name":"Акция 2","description":"Описание акции 2","codes":[{"code":"PROMO2","expiry":"2024-11-30"}],"site":"https://example.com"}' aria-label="Акция 2">Акция 2</button>
+            <!-- Добавьте больше кнопок с акциями по аналогии -->
+        </div>
 
-      <div id="categoriesSection" class="section">
-         <button class="category" data-category="Категория 1">Категория 1</button>
-         <button class="category" data-category="Категория 2">Категория 2</button>
-         <!-- Добавьте больше кнопок с категориями по аналогии -->
-      </div>
+        <div id="categoriesSection" class="section">
+            <button class="category" data-category="Категория 1" aria-label="Категория 1">Категория 1</button>
+            <button class="category" data-category="Категория 2" aria-label="Категория 2">Категория 2</button>
+            <!-- Добавьте больше кнопок с категориями по аналогии -->
+        </div>
 
-      <div id="promotionListSection" class="section">
-         <p id="promotionListText">Выберите категорию, чтобы увидеть список акций.</p>
-         <div id="promotionListButtons" class="promotion-list"></div>
-      </div>
+        <div id="promotionListSection" class="section">
+            <p id="promotionListText">Выберите категорию, чтобы увидеть список акций.</p>
+            <div id="promotionListButtons" class="promotion-list"></div>
+        </div>
 
-      <div id="descriptionSection" class="section">
-         <p id="descriptionText">Выберите акцию, чтобы увидеть описание.</p>
-      </div>
-   </div>
+        <div id="descriptionSection" class="section">
+            <div id="promotionDetails">
+                <h2 id="promotionName">Название акции</h2>
+                <p id="promotionDescription">Описание акции</p>
+                <div id="promotionCodes">
+                    <!-- Промокоды будут добавлены здесь динамически -->
+                </div>
+                <p id="promotionExpiry">Дата истечения: <span id="expiryDate"></span></p>
+                <div id="promotionActions">
+                    <button id="copyCode" aria-label="Скопировать промокод">Скопировать</button>
+                    <button id="goToSite" aria-label="Перейти на сайт">Перейти на сайт</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-   <script>
-      let tg = window.Telegram.WebApp;
-      tg.expand();
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-      document.getElementById('btnPromotions').addEventListener('click', function() {
-         document.getElementById('promotionsSection').classList.add('active');
-         document.getElementById('categoriesSection').classList.remove('active');
-         document.getElementById('descriptionSection').classList.remove('active');
-         document.getElementById('promotionListSection').classList.remove('active');
-         this.classList.add('active');
-         document.getElementById('btnCategories').classList.remove('active');
-      });
+        function updateTheme() {
+            document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
+            document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
+            document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
+            document.documentElement.style.setProperty('--tg-theme-active-button-color', tg.themeParams.active_button_color);
+            document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color);
+            document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
+        }
 
-      document.getElementById('btnCategories').addEventListener('click', function() {
-         document.getElementById('categoriesSection').classList.add('active');
-         document.getElementById('promotionsSection').classList.remove('active');
-         document.getElementById('descriptionSection').classList.remove('active');
-         document.getElementById('promotionListSection').classList.remove('active');
-         this.classList.add('active');
-         document.getElementById('btnPromotions').classList.remove('active');
-      });
+        tg.onEvent('themeChanged', updateTheme);
 
-      document.querySelectorAll('.promotion').forEach(button => {
-         button.addEventListener('click', function() {
-            const description = this.getAttribute('data-description');
-            document.getElementById('descriptionText').innerText = description;
-            document.getElementById('descriptionSection').classList.add('active');
-            document.getElementById('promotionsSection').classList.remove('active');
+        document.getElementById('btnPromotions').addEventListener('click', function() {
+            document.getElementById('promotionsSection').classList.add('active');
             document.getElementById('categoriesSection').classList.remove('active');
+            document.getElementById('descriptionSection').classList.remove('active');
             document.getElementById('promotionListSection').classList.remove('active');
-         });
-      });
+            this.classList.add('active');
+            document.getElementById('btnCategories').classList.remove('active');
+        });
 
-      function showPromotionsForCategory(category) {
-         const promotionsData = {
-            "Категория 1": ["Акция 1", "Акция 2"],
-            "Категория 2": ["Акция 3", "Акция 4"]
-         };
+        document.getElementById('btnCategories').addEventListener('click', function() {
+            document.getElementById('categoriesSection').classList.add('active');
+            document.getElementById('promotionsSection').classList.remove('active');
+            document.getElementById('descriptionSection').classList.remove('active');
+            document.getElementById('promotionListSection').classList.remove('active');
+            this.classList.add('active');
+            document.getElementById('btnPromotions').classList.remove('active');
+        });
 
-         const promotions = promotionsData[category] || [];
-         const promotionListContainer = document.getElementById('promotionListButtons');
-
-         promotionListContainer.innerHTML = '';
-
-         promotions.forEach(promotion => {
-            const button = document.createElement('button');
-            button.classList.add('promotion-button');
-            button.innerText = promotion;
+        document.querySelectorAll('.promotion').forEach(button => {
             button.addEventListener('click', function() {
-               document.querySelectorAll('.promotion').forEach(btn => {
-                  if (btn.innerText === promotion) {
-                     btn.click();
-                  }
-               });
+                const promotionData = JSON.parse(this.getAttribute('data-promotion'));
+                const name = promotionData.name;
+                const description = promotionData.description;
+                const codes = promotionData.codes;
+                const site = promotionData.site;
+
+                document.getElementById('promotionName').innerText = name;
+                document.getElementById('promotionDescription').innerText = description;
+
+                const codesContainer = document.getElementById('promotionCodes');
+                codesContainer.innerHTML = ''; // Очищаем предыдущие коды
+
+                codes.forEach(code => {
+                    const codeElement = document.createElement('p');
+                    codeElement.innerText = `Промокод: ${code.code} - Истекает: ${code.expiry}`;
+                    codesContainer.appendChild(codeElement);
+                });
+
+                document.getElementById('expiryDate').innerText = codes.map(code => code.expiry).join(', ');
+
+                const copyCodeButton = document.getElementById('copyCode');
+                copyCodeButton.onclick = function() {
+                    navigator.clipboard.writeText(codes.map(code => code.code).join(', '));
+                };
+
+                const goToSiteButton = document.getElementById('goToSite');
+                goToSiteButton.onclick = function() {
+                    window.location.href = site;
+                };
+
+                document.getElementById('descriptionSection').classList.add('active');
+                document.getElementById('promotionsSection').classList.remove('active');
+                document.getElementById('categoriesSection').classList.remove('active');
+                document.getElementById('promotionListSection').classList.remove('active');
             });
-            promotionListContainer.appendChild(button);
-         });
+        });
 
-         document.getElementById('promotionListText').innerText = `Акции для ${category}:`;
-         document.getElementById('promotionListSection').classList.add('active');
-         document.getElementById('categoriesSection').classList.remove('active');
-         document.getElementById('promotionsSection').classList.remove('active');
-         document.getElementById('descriptionSection').classList.remove('active');
-      }
+        function showPromotionsForCategory(category) {
+            const promotionsData = {
+                "Категория 1": ["Акция 1", "Акция 2"],
+                "Категория 2": ["Акция 3", "Акция 4"]
+            };
 
-      document.querySelectorAll('.category').forEach(button => {
-         button.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            showPromotionsForCategory(category);
-         });
-      });
+            const promotions = promotionsData[category] || [];
+            const promotionListContainer = document.getElementById('promotionListButtons');
 
-      tg.MainButton.text = "Выбрать";
-      tg.MainButton.setText("Выбрать");
-      tg.MainButton.textColor = "#F55353";
-      tg.MainButton.color = "#143F6B";
-      tg.MainButton.setParams({ "color": "#143F6B" });
+            promotionListContainer.innerHTML = '';
 
-      tg.MainButton.onClick(() => {
-         tg.sendData("Выбранные данные");
-      });
-   </script>
+            promotions.forEach(promotion => {
+                const button = document.createElement('button');
+                button.classList.add('promotion-button');
+                button.innerText = promotion;
+                button.setAttribute('aria-label', promotion);
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.promotion').forEach(btn => {
+                        if (btn.innerText === promotion) {
+                            btn.click();
+                        }
+                    });
+                });
+                promotionListContainer.appendChild(button);
+            });
+
+            document.getElementById('promotionListText').innerText = `Акции для ${category}:`;
+            document.getElementById('promotionListSection').classList.add('active');
+            document.getElementById('categoriesSection').classList.remove('active');
+            document.getElementById('promotionsSection').classList.remove('active');
+            document.getElementById('descriptionSection').classList.remove('active');
+        }
+
+        document.querySelectorAll('.category').forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                showPromotionsForCategory(category);
+            });
+        });
+
+        tg.MainButton.text = "Выбрать";
+        tg.MainButton.setText("Выбрать");
+        tg.MainButton.textColor = "#F55353";
+        tg.MainButton.color = "#143F6B";
+        tg.MainButton.setParams({ "color": "#143F6B" });
+
+        tg.MainButton.onClick(() => {
+            tg.sendData("Выбранные данные");
+        });
+
+        updateTheme();
+    </script>
 </body>
 </html>
